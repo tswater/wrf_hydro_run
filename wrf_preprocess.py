@@ -289,7 +289,7 @@ if setup_hrldas:
 			hrldas_write+=' RESTART_FILENAME_REQUESTED = \"'+\
 			              restart_loc+'\"'+'\n'
 		elif 'KHOUR' in line: # runlength
-			hrldas_write+=' KHOUR = '+str(sim_time)+'\n'
+			hrldas_write+=' KHOUR = '+str(int(round(sim_time)))+'\n'
 		else:
 			hrldas_write+= line
 	fp_hrldas.close()
