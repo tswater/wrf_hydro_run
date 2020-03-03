@@ -195,7 +195,7 @@ print('FINISHED DOMAIN PREPROCESSING')
 # -------------------------------------------------------------------------- #
 if setup_wrfinput:
 	print('Creating wrfinput...', end='',flush=True)
-	subprocess.run('mv '+scripts_dir+'create_wrfinput.R '+w_dir,shell=True)
+	subprocess.run('cp '+scripts_dir+'create_wrfinput.R '+w_dir,shell=True)
 	os.chdir(w_dir)
 	subprocess.run('./create_wrfinput.R --geogrid='+run_dir+dom_dir+'geo_em.d01.nc >'+run_dir+log_dir+'wrfinput_log.txt',shell=True)
 	os.chdir(run_dir)

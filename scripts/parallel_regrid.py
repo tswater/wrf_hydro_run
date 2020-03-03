@@ -45,8 +45,6 @@ filelist = ast.literal_eval(argv[6])
 if (rank == 0):
 	sys.exit()
 
-print('\nRANK: '+str(rank)+'\n'+str(filelist[rank::size])+'\n')
-
 fp_geo = nc.Dataset(geogrid,'r')
 corner_lats = fp_geo.corner_lats[0:4]
 corner_lons = fp_geo.corner_lons[0:4]
