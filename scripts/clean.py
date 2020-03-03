@@ -9,8 +9,9 @@ dom_dir = run_dir+'/DOMAIN/'
 forc_dir = run_dir+'/FORCING/'
 subprocess.run('rm -r '+log_dir,shell=True)
 subprocess.run('rm '+namelist_dir+'*',shell=True)
-subprocess.run('rm -r '+workspace,shell=True)
+subprocess.run('rm -r '+w_dir,shell=True)
 subprocess.run('rm -r '+dom_dir,shell=True)
 subprocess.run('rm -r '+forc_dir,shell=True)
 subprocess.run('rm -r '+run_dir+'/OUT/',shell=True)
-subprocess.run('rm '+run_dir+'/*.nc')
+subprocess.run('rm -r '+run_dir+'/hydro2dtbl*',shell=True)
+subprocess.run('rm '+run_dir+'/*.nc',shell=True)

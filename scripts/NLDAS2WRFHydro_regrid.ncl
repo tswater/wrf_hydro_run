@@ -101,7 +101,7 @@ begin
 ;----------------------------------------------------------------------
 ; Open source data files to be regridded...
 ;----------------------------------------------------------------------
-  system("mkdir "+outdir)
+;  system("mkdir "+outdir)
 
   datfils = systemfunc ("ls "+dirm+srcFileName)    ; list of file names
   num_datfils     = dimsizes(datfils)
@@ -135,9 +135,9 @@ begin
      ; Open output file
      ;----------------------------------------------------------------------
       ncfile= outdir + date_str+".LDASIN_"+domain+".nc"
-      if ( isfilepresent( ncfile ) ) then
-         system ("/bin/rm "+ncfile)
-      end if
+     ;if ( isfilepresent( ncfile ) ) then
+     ;   system ("/bin/rm "+ncfile)
+     ; end if
       ncdf= addfile(ncfile,"c")
       filedimdef( ncdf ,"Time",-1,True)
       ncdf->lat = dlat2d   ;output lat
@@ -255,8 +255,8 @@ begin
      
      end do   ; end do for variable loop
    
-     dstFile = str_sub_str(ncfile, ".nc" , "")
-     system( "mv "+ncfile+" "+dstFile)
+      dstFile = str_sub_str(ncfile, ".nc" , "")
+      system( "mv "+ncfile+" "+dstFile)
    end do   ; end do for file loop
 
 

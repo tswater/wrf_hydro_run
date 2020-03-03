@@ -23,7 +23,7 @@ dx             = 1000 # gridcell size for mass grid
 dy             = 1000 # gridcell size for mass grid
 grid_ratio     = 4 # ratio between mass and routing gridcell size
 start_date     = '2011-08-26_00:00:00' # format 'yyyy-mm-dd_hh:mm:ss'
-end_date       = '2011-09-02_23:00:00' # format 'yyyy-mm-dd_hh:mm:ss'
+end_date       = '2011-08-27_23:00:00' # format 'yyyy-mm-dd_hh:mm:ss'
 
 # Projection information (always lambert conformal conic)
 truelat1       = 30.0 # first standard parallel
@@ -41,8 +41,8 @@ dem_loc        = '/home/tsw35/soteria/software/WRF_hydro_standalone/tst_ny/dem/d
 
 # Other Script Parameters 
 thresh         = 50 # channel determination threshold; see readme.txt
-n_cores        = 8 # number of cores to use in parallelized processes
-clean          = True # set to False to keep the working directory
+n_cores        = 3 # number to use in parallelized processes MINIMUM OF 2
+clean          = False # set to False to keep the working directory
 restart        = False # set to True to look for restart files
 setup_domain   = True # set to False to skip geogrid generation
 setup_wrfinput = True # set to False to skip creation of wrfinput
@@ -234,14 +234,20 @@ if setup_routing:
 # Regrid the incomming forcing data. This step will take a while
 # -------------------------------------------------------------------------- #
 if setup_forcing:
-	subprocess.run('cp '+scripts_dir+'NLDAS2* '+w_dir,shell=True)
+	for i in range(n_cores):
+		subprocess.run('cp '+scripts_dir+'NLDAS2WRFHydro_regrid.ncl '\
+		     +w_dir+'NLDAS2WRFHydro_regrid'+str(i)+'.ncl ',shell=True)
+	subprocess.run('cp '+scripts_dir+'parallel_regrid.py '+w_dir,shell=True)
+	subprocess.run('cp '+scripts_dir+'NLDAS2WRFHydro_generate_weights.ncl '\
+	     +w_dir,shell=True)
 	os.chdir(w_dir)
-	forcing_cmd = 'python ' +run_dir+scripts_dir+'wrf_weather_regrid.py '+start_date\
-	              +' '+end_date+' '+forcing_loc+' \''+proj+'\' '+ \
-	              w_dir+' '+dom_dir+' '+forc_dir+' '+log_dir+' '+run_dir
+	forcing_cmd = 'python ' +run_dir+scripts_dir+'wrf_weather_regrid.py '\
+             +start_date+' '+end_date+' '+forcing_loc+' '+str(n_cores)+' \''+\
+             proj+'\' '+w_dir+' '+dom_dir+' '+forc_dir+' '+log_dir+' '+run_dir
 	subprocess.run(forcing_cmd,shell=True)
 	os.chdir(run_dir)
-#	subprocess.run('rm '+w_dir+'NLDAS2WRFHydro_*',shell=True)
+	if clean:
+		subprocess.run('rm '+w_dir+'NLDAS2WRFHydro_*',shell=True)
 
 
 # -------------------------------------------------------------------------- #
