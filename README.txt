@@ -31,6 +31,11 @@ In the Forcing folder, there should be many files
 
 Add the working folder to the path. (export PATH=$PATH:[run directory])
 
+You may wish to make changes to hydro.namelist and namelist.hrldas. Specifically,
+the defaults assume that you you are running without subsurface or surface
+routing and without any restart files. Look at the docummentation for these
+namelists online.
+
 Run run_wrf.py [n]  where n is the number of processes requested
 
 All output should be in the OUT folder created by running run_wrf.py
