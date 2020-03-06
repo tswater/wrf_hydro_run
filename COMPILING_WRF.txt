@@ -11,7 +11,8 @@
 	make sure that CPPFLAGS and LDFLAGS are assigned in same line as configure
 8)	Install netCDF for Fortran (follow instructions in install/readme)
 	may need to define FC=/…/gfortran     as well as  F77=/…/gfortran
-9)	Now add WRF: https://www2.mmm.ucar.edu/wrf/OnLineTutorial/compilation_tutorial.php 
+9)	If you have not already done so, add openmpi*/bin (NOT mpich) on the cluster to path
+10)	Now add WRF: https://www2.mmm.ucar.edu/wrf/OnLineTutorial/compilation_tutorial.php 
 	a)	Compiled with dmpar, gfortran. NoahMP. 
 		whenever given an option did the default 
 	b)	Compiled em_real case (3D real)
@@ -23,10 +24,9 @@
 		folder from WRF-4.1.3 to WRF and the error was fixed
 	e)	I chose to compile WPS in serial, since this was “highly recommended” 
 		in the instructions
-10)	At this point I realize that this got WRF up and running but not WRF Hydro 
-	standalone so that is interesting, but I guess I now have WRF compiled. So now 
-	I went back and compiled WRF hydro in standalone with no issues: 
-	https://ral.ucar.edu/sites/default/files/public/HowToBuildandRunWRF-HydroV5inStandaloneMode.pdf
+10)	Continue with compiling wrf_hydro standalone; follow the listed instructions
 11)	After this, follow the istructions in the README.txt here. You may want to
-	move the wrf_hydro.exe file here for an updated compile, as well as namelists
-	and .TBL files in tables.
+	move the wrf_hydro.exe file from wrf_hydro compilation here for an updated compile,
+	as well as namelists and .TBL files in tables. Although, there is no gaurantee that
+	the updated version of wrf hydro will work. Currently, these scripts are meant for
+	WRF HYDRO 5.1.1
