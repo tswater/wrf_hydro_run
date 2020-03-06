@@ -228,6 +228,11 @@ fp_out['LONGITUDE']._CoordinateAxisType="Lon"
 fp_out['LONGITUDE']._CoordinateSystems="crs"
 fp_out['LONGITUDE'][:]=lon_grid[:]
 
+# LKSATFAC
+fp_out.createVariable('LKSATFAC','f',dimensions=('y','x'))
+fp_out['LKSATFAC'].grid_mapping="crs"
+fp_out['LKSATFAC'][:]=np.ones((y,x))*1000
+
 # EMPTIES -9999: frxst_pts, basn_msk, LAKEGRID,
 fp_out.createVariable('frxst_pts','i',dimensions=('y','x'))
 fp_out['frxst_pts'][:]=np.ones((y,x))*-9999
