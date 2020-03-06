@@ -10,7 +10,6 @@ import subprocess
 import mpi4py.rc
 #import parUtils as par
 #mpi4py.rc.finalize = False
-
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 size = comm.Get_size()
@@ -143,4 +142,4 @@ cmd = "ncl 'srcFileName=\"NLDAS_FORA0125_H.*\"' 'dstGridName=\""+geogrid+"\"' "+
        regrid_ncl+' >'+run_dir+log_dir+"regrid_log"+str(rank)+".txt"
 print(cmd,flush=True)
 subprocess.run(cmd,shell=True)
-
+print(str(rank)+': complete',flush=True)

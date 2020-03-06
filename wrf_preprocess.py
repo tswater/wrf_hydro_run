@@ -23,7 +23,7 @@ dx             = 1000 # gridcell size for mass grid
 dy             = 1000 # gridcell size for mass grid
 grid_ratio     = 4 # ratio between mass and routing gridcell size
 start_date     = '2011-08-26_00:00:00' # format 'yyyy-mm-dd_hh:mm:ss'
-end_date       = '2011-08-27_23:00:00' # format 'yyyy-mm-dd_hh:mm:ss'
+end_date       = '2011-09-02_23:00:00' # format 'yyyy-mm-dd_hh:mm:ss'
 
 # Projection information (always lambert conformal conic)
 truelat1       = 30.0 # first standard parallel
@@ -36,12 +36,12 @@ restart_loch   = '' # location of hydro restart files if any
 dem_loc        = '/stor/tyche/hydro/private/nc153/nwc/GAEA/data/NEDtiled/NED.vrt' # location of dem.vrt or dem.tif
 forcing_loc    = '/stor/soteria/hydro/shared/data/PCF/1hr/daily/' # location of forcing files
 wps_geo_loc    = '../../software/WPS_GEOG/'# location of WRF Preprocessing Script geological data
-wps_loc        = '../../software/WPS-4.1/'
-dem_loc        = '/home/tsw35/soteria/software/WRF_hydro_standalone/tst_ny/dem/dem.tif'
+wps_loc        = '../../software/WPS/'
+#dem_loc        = '/home/tsw35/soteria/software/WRF_hydro_standalone/tst_ny/dem/dem.tif'
 
 # Other Script Parameters 
 thresh         = 50 # channel determination threshold; see readme.txt
-n_cores        = 3 # number to use in parallelized processes MINIMUM OF 2
+n_cores        = 8 # number to use in parallelized processes MINIMUM OF 2
 clean          = False # set to False to keep the working directory
 restart        = False # set to True to look for restart files
 setup_domain   = True # set to False to skip geogrid generation
@@ -139,6 +139,7 @@ print(' Complete',flush=True)
 if setup_domain:
 	print('Geogrid generation...',end='',flush=True)
 	os.chdir(wps_loc)
+	subprocess.run('mv '+run_dir+namelist_dir+'namelist.wps '+wps_loc,shell=True)
 	subprocess.run('./geogrid.exe >'+run_dir+log_dir+'geogrid_log.txt',shell=True)
 	os.chdir(run_dir)
 	subprocess.run('mv '+wps_loc+'geo_em.d01.nc '+dom_dir,shell=True)
@@ -312,7 +313,7 @@ if setup_hrldas:
 # -------------------------------------------------------------------------- #
 print('Creating 3D Soil Properties...',end='',flush=True)
 soil_write =''
-fp_soil = open(scripts_dir+'create_SoilProperties.R','r')
+fp_soil = open(scripts_dir+'create_soilproperties.R','r')
 for line in fp_soil:
 	if 'geoFile <- ' in line:
 		soil_write += 'geoFile <- \"'+run_dir+dom_dir+'geo_em.d01.nc\"'+'\n'
@@ -331,14 +332,14 @@ for line in fp_soil:
 	else:
 		soil_write+= line
 fp_soil.close()
-fp_out = open(w_dir+'create_SoilProperties.R','w')
+fp_out = open(w_dir+'create_soilproperties.R','w')
 fp_out.write(soil_write)
 fp_out.close()
 
 # Actually run the file
 os.chdir(w_dir)
-subprocess.run('chmod +x create_SoilProperties.R',shell=True)
-subprocess.run('Rscript create_SoilProperties.R >'+run_dir+log_dir+'soilproplog.txt',shell=True)
+subprocess.run('chmod +x create_soilproperties.R',shell=True)
+subprocess.run('Rscript create_soilproperties.R >'+run_dir+log_dir+'soilproplog.txt',shell=True)
 os.chdir(run_dir)
 print('COMPLETE',flush=True)
 subprocess.run('mkdir OUT',shell=True)

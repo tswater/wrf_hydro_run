@@ -145,7 +145,7 @@ print('Regridding...',end='',flush=True)
 print(os.getcwd(),flush=True)
 runargs=w_input+' '+w_dir+' '+forcing_dir+' '+log_dir+' '+run_dir+' '+geogrid\
      +' '+'"'+str(filelist)+'"'
-mpi_cmd = 'mpiexec -n '+str(ncores)+' python parallel_regrid.py '+runargs
+mpi_cmd = 'mpiexec --mca mpi_warn_on_fork 0 -n '+str(ncores)+' python parallel_regrid.py '+runargs
 subprocess.run(mpi_cmd,shell=True)
 print('COMPLETE',flush=True)
 
