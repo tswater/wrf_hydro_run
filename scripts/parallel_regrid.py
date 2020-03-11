@@ -82,6 +82,9 @@ for file in filelist[rank-1::size-1]:
 	month = file[4:6]
 	day = file[6:8]
 	
+	# Get the fill value for the variables
+	fill_value=fp['swdown']._FillValue
+	
 	for t in range(24):
 		if t > 9:
 			hour = str(t)
@@ -101,12 +104,12 @@ for file in filelist[rank-1::size-1]:
 			if var == 'wind':
 				data = np.sqrt((data**2)/2)
 				name = var_names[var][0]
-				fpout.createVariable(name,'f4',('lat_110','lon_110'))
+				fpout.createVariable(name,'f4',('lat_110','lon_110'),fill_value=fill_value)
 				fpout[name][:]=data[:]
 				name = var_names[var][1]
 			else:
 				name = var_names[var]
-			fpout.createVariable(name,'f4',('lat_110','lon_110'))
+			fpout.createVariable(name,'f4',('lat_110','lon_110'),fill_value=fill_value)
 			fpout[name][:]=data[:]
 		fpout.close()
 	fp.close()

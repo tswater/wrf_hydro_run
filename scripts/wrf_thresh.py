@@ -34,7 +34,7 @@ stand_lon      = -97.0 # standard_longitude
 # File locations
 dem_loc        = '/stor/tyche/hydro/private/nc153/nwc/GAEA/data/NEDtiled/NED.vrt' # location of dem.vrt or dem.tif
 wps_geo_loc    = '../../software/WPS_GEOG/'# location of WRF Preprocessing Script geological data
-wps_loc        = '../../software/WPS-4.1/'
+wps_loc        = '../../software/WPS/'
 
 # Other Script Parameters 
 n_cores        = 4 # number to use in parallelized processes MINIMUM OF 2

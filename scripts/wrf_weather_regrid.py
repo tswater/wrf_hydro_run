@@ -102,17 +102,18 @@ fpout.createVariable('lat_110','f4',('lat_110'))
 fpout.createVariable('lon_110','f4',('lon_110'))
 fpout['lat_110'][:]=lats[lat_m]
 fpout['lon_110'][:]=lons[lon_m]
+fill_value = fp['swdown']._FillValue
 for var in var_names.keys():
 	data = fp[var][12,lat_m,lon_m]
 	if var == 'wind':
 		data = np.sqrt((data**2)/2)
 		name = var_names[var][0]
-		fpout.createVariable(name,'f4',('lat_110','lon_110'))
+		fpout.createVariable(name,'f4',('lat_110','lon_110'),fill_value=fill_value)
 		fpout[name][:]=data[:]
 		name = var_names[var][1]
 	else:
 		name = var_names[var]
-	fpout.createVariable(name,'f4',('lat_110','lon_110'))
+	fpout.createVariable(name,'f4',('lat_110','lon_110'),fill_value=fill_value)
 	fpout[name][:]=data[:]
 fpout.close()
 fp.close()

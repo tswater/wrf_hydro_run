@@ -22,8 +22,8 @@ e_sn           = 17 # number of gridcells in north_south direction
 dx             = 1000 # gridcell size for mass grid
 dy             = 1000 # gridcell size for mass grid
 grid_ratio     = 4 # ratio between mass and routing gridcell size
-start_date     = '2011-08-26_00:00:00' # format 'yyyy-mm-dd_hh:mm:ss'
-end_date       = '2011-09-02_23:00:00' # format 'yyyy-mm-dd_hh:mm:ss'
+start_date     = '2010-11-16_00:00:00' # format 'yyyy-mm-dd_hh:mm:ss'
+end_date       = '2010-11-18_23:00:00' # format 'yyyy-mm-dd_hh:mm:ss'
 
 # Projection information (always lambert conformal conic)
 truelat1       = 30.0 # first standard parallel
@@ -42,7 +42,7 @@ wps_loc        = '../../software/WPS/'
 # Other Script Parameters 
 thresh         = 50 # channel determination threshold; see readme.txt
 n_cores        = 8 # number to use in parallelized processes MINIMUM OF 2
-clean          = False # set to False to keep the working directory
+clean          = True # set to False to keep the working directory
 restart        = False # set to True to look for restart files
 setup_domain   = True # set to False to skip geogrid generation
 setup_wrfinput = True # set to False to skip creation of wrfinput
@@ -346,6 +346,12 @@ subprocess.run('mkdir OUT',shell=True)
 subprocess.run('export PATH=$PATH:'+run_dir,shell=True)
 if clean:
 	subprocess.run('rm -r '+w_dir,shell=True)
+
+# Move files to prepare for running wrf_hydro.exe
+subprocess.run('cp tables/* .',shell=True)
+subprocess.run('cp namelists/namelist.hrldas .',shell=True)
+subprocess.run('cp namelists/hydro.namelist .',shell=True)
+
 
 print('----- WRF PREPROCESSING COMPLETE -----')
 
