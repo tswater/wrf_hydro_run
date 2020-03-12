@@ -22,8 +22,8 @@ e_sn           = 17 # number of gridcells in north_south direction
 dx             = 1000 # gridcell size for mass grid
 dy             = 1000 # gridcell size for mass grid
 grid_ratio     = 4 # ratio between mass and routing gridcell size
-start_date     = '2010-08-01_00:00:00' # format 'yyyy-mm-dd_hh:mm:ss'
-end_date       = '2011-08-01_23:00:00' # format 'yyyy-mm-dd_hh:mm:ss'
+start_date     = '2010-07-29_00:00:00' # format 'yyyy-mm-dd_hh:mm:ss'
+end_date       = '2010-08-02_23:00:00' # format 'yyyy-mm-dd_hh:mm:ss'
 
 # Projection information (always lambert conformal conic)
 truelat1       = 30.0 # first standard parallel
@@ -41,7 +41,7 @@ wps_loc        = '../../software/WPS/'
 
 # Other Script Parameters 
 thresh         = 50 # channel determination threshold; see readme.txt
-n_cores        = 16 # number to use in parallelized processes MINIMUM OF 2
+n_cores        = 8 # number to use in parallelized processes MINIMUM OF 2
 clean          = True # set to False to keep the working directory
 restart        = False # set to True to look for restart files
 setup_domain   = True # set to False to skip geogrid generation
@@ -341,6 +341,7 @@ os.chdir(w_dir)
 subprocess.run('chmod +x create_soilproperties.R',shell=True)
 subprocess.run('Rscript create_soilproperties.R >'+run_dir+log_dir+'soilproplog.txt',shell=True)
 os.chdir(run_dir)
+subprocess.run('mv hydro2dtbl.nc '+dom_dir+'hydro2dtbl.nc',shell=True)
 print('COMPLETE',flush=True)
 subprocess.run('mkdir OUT',shell=True)
 subprocess.run('export PATH=$PATH:'+run_dir,shell=True)
