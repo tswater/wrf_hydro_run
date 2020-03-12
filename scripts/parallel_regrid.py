@@ -8,23 +8,11 @@ import numpy as np
 import os
 import subprocess
 import mpi4py.rc
-#import parUtils as par
-#mpi4py.rc.finalize = False
+
+# MPI4PY Stuff
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 size = comm.Get_size()
-
-# move to directory, create a list of subfolders using glob
-# dir = directories[rank]
-
-# WORKFLOW 
-# Give each one a portion of the initial filelist
-# Put each portion (reformated) into its own directory
-# Place a copy of the ncl script unique for each rank 
-#	edit the out part and the name of the script
-# Run each script for each subdir
-# Yay done
-
 
 # -------------- #
 # LOAD ARGUMENTS #

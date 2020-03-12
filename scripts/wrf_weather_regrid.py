@@ -78,7 +78,6 @@ for i in range(num_days):
                 day = '0'+str(date.day)
         filelist.append(str(date.year)+str(month)+str(day)+'.nc')
 
-
 print('COMPLETE',flush=True)
 
 
@@ -124,11 +123,9 @@ fp.close()
 # ------------------------- REGRID THE FILES ------------------------------- #
 # Regrid the incomming forcing data. This step will take a while             #
 # -------------------------------------------------------------------------- #
-
 # Some filenames
 grid_file = out_name
 geogrid = run_dir+dom_dir+'geo_em.d01.nc'
-
 
 # Regrid Weights
 cmd1 = "ncl 'interp_opt=\"bilinear\"' 'srcGridName=\""+grid_file+\

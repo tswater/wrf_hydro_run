@@ -17,9 +17,9 @@ REQUIRED:
 - A DEM
 - Forcing data
 
+First, move wrf_hydro.exe from the wrf hydro run folder to this location
 
-
-First, fill in the text on the wrf_preprocess.py file in the top section. No
+Fill in the text on the wrf_preprocess.py file in the top section. No
 other changes should be necessary in this file. 
 
 Run wrf_preprocess.py
@@ -36,7 +36,7 @@ the defaults assume that you you are running without subsurface or surface
 routing and without any restart files. Look at the docummentation for these
 namelists online.
 
-Run run_wrf.py [n]  where n is the number of processes requested
+Run mpiexec -n [num_processes] wrf_hydro.exe
 
 All output should be in the OUT folder created by running run_wrf.py
 
