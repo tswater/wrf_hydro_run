@@ -95,6 +95,9 @@ for file in filelist[rank-1::size-1]:
 				fpout.createVariable(name,'f4',('lat_110','lon_110'),fill_value=fill_value)
 				fpout[name][:]=data[:]
 				name = var_names[var][1]
+			elif var == 'precip':
+				data = data*60*60
+				name = var_names[var]
 			else:
 				name = var_names[var]
 			fpout.createVariable(name,'f4',('lat_110','lon_110'),fill_value=fill_value)
