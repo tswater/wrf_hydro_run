@@ -33,12 +33,12 @@ w_dir = argv[10]
 run_dir = argv[11]
 extent = [0,0,0,0] #
 extent[0]=float(argv[12])
-extent[1]=float(argv[12])
-extent[2]=float(argv[13])
-extent[3]=float(argv[14])
-truelat1 =float(argv[15])
-truelat2 =float(argv[16])
-stand_lon=float(argv[17])
+extent[1]=float(argv[13])
+extent[2]=float(argv[14])
+extent[3]=float(argv[15])
+truelat1 =float(argv[16])
+truelat2 =float(argv[17])
+stand_lon=float(argv[18])
 
 
 # change working directory
