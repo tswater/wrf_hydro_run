@@ -42,7 +42,7 @@ wps_loc        = '../../software/WPS/'
 # Other Script Parameters 
 thresh         = 50 # channel determination threshold; see readme.txt
 n_cores        = 8 # number to use in parallelized processes MINIMUM OF 2
-clean          = True # set to False to keep the working directory
+clean          = False # set to False to keep the working directory
 restart        = False # set to True to look for restart files
 setup_domain   = True # set to False to skip geogrid generation
 setup_wrfinput = True # set to False to skip creation of wrfinput
@@ -214,6 +214,7 @@ if setup_wrfinput:
 # grids into Fulldom_hires.nc
 # -------------------------------------------------------------------------- #
 ex_string = str(extent[0])+' '+str(extent[1])+' '+str(extent[2])+' '+str(extent[3])
+print(ex_string)
 if setup_routing:
 	print('Creating DEM...',end='',flush=True)
 	os.chdir(w_dir)
@@ -234,21 +235,40 @@ if setup_routing:
 # ------------------------ SETUP FORCING FILES ----------------------------- #
 # Regrid the incomming forcing data. This step will take a while
 # -------------------------------------------------------------------------- #
+filelist = []
+dt = timedelta(1)
+num_days=(end_dt-start_dt)/dt
+num_days = round(num_days+1)
+n_files= num_days*24
+geogrid = dom_dir+'geo_em.d01.nc'
+
+for i in range(num_days):
+	date = start_dt+dt*i
+	if date.month > 9:
+		month = date.month
+	else:
+		month = '0'+str(date.month)
+	if date.day > 9:
+		day = date.day
+	else:
+		day = '0'+str(date.day)
+	filelist.append(str(date.year)+str(month)+str(day)+'.nc')
+
 if setup_forcing:
-	for i in range(n_cores):
-		subprocess.run('cp '+scripts_dir+'NLDAS2WRFHydro_regrid.ncl '\
-		     +w_dir+'NLDAS2WRFHydro_regrid'+str(i)+'.ncl ',shell=True)
-	subprocess.run('cp '+scripts_dir+'parallel_regrid.py '+w_dir,shell=True)
-	subprocess.run('cp '+scripts_dir+'NLDAS2WRFHydro_generate_weights.ncl '\
-	     +w_dir,shell=True)
+	
+	subprocess.run('cp '+scripts_dir+'wrf_regrid.py '+w_dir,shell=True)
 	os.chdir(w_dir)
-	forcing_cmd = 'python ' +run_dir+scripts_dir+'wrf_weather_regrid.py '\
-             +start_date+' '+end_date+' '+forcing_loc+' '+str(n_cores)+' \''+\
-             proj+'\' '+w_dir+' '+dom_dir+' '+forc_dir+' '+log_dir+' '+run_dir
+	src_proj = "'+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs'"
+	gdal_cmd = '\"gdalwarp -s_srs '+src_proj+' -t_srs \''+proj+'\' -te '+ex_string+' -tr '+\
+		   str(dx)+' '+str(dy)+' -r bilinear \"'
+
+	print(gdal_cmd)
+	runargs= forcing_loc+' '+w_dir+' '+forc_dir+' '+run_dir+' '+geogrid\
+                +' '+gdal_cmd+' "'+str(filelist)+'"'
+	forcing_cmd = 'mpiexec --mca mpi_warn_on_fork 0 -n '+str(n_cores)+\
+                      ' python wrf_regrid.py '+runargs
 	subprocess.run(forcing_cmd,shell=True)
 	os.chdir(run_dir)
-	if clean:
-		subprocess.run('rm '+w_dir+'NLDAS2WRFHydro_*',shell=True)
 
 
 # -------------------------------------------------------------------------- #

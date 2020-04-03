@@ -27,7 +27,8 @@ Run wrf_preprocess.py
 Check the output in the DOMAIN and FORCING folders. In DOMAIN you should have
 4 netcdf files, metadata, fulldom_hires, wrfinput and geo_emd01.nc
 
-In the Forcing folder, there should be many files
+In the Forcing folder, there should be many files. Run ncdump [filename]
+to verify the forcing data was written properly.
 
 Add the working folder to the path. (export PATH=$PATH:[run directory])
 
@@ -40,4 +41,9 @@ Run mpiexec -n [num_processes] wrf_hydro.exe
 
 All output should be in the OUT folder created by running run_wrf.py
 
+To Postprocess the data (improve chunking for i/o, remove unecessary variables)
+run (int the main folder) scripts/wrf_postprocess.py
+
 To clean the output AND preprocessing from the folder, run scripts/clean.py
+Note that you may need to change the run directory listed in clean.py
+
