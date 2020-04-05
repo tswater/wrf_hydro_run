@@ -82,7 +82,7 @@ for file in filelist[rank::size]:
 		src_file =w_input+file
 		src_name = "NETCDF:\""+src_file+"\":"+var_names[var]
 		new_name = run_dir+w_dir+out_dir+file[0:8]+"_"+var+".nc"
-		regrid_cmd = gdal_cmd+'-srcnodata '+str(fill_value)+\
+		regrid_cmd = gdal_cmd+'-srcnodata 30784'+\
                      ' '+src_name+' '+new_name+' >/dev/null'
 		subprocess.run(regrid_cmd,shell=True)
 	data = nc.Dataset(new_name,'r')['Band20'][:]
