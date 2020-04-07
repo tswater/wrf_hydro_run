@@ -15,15 +15,15 @@ from datetime import timedelta
 # -------------------------------------------------------------------------- #
 
 # Description of Domain
-lat_center     = 41.471 # latitude of the center of the domain
-lon_center     = -73.74365 # longitude of the center of the domain
-e_we           = 16 # number of gridcells in west_east direction
-e_sn           = 17 # number of gridcells in north_south direction
-dx             = 1000 # gridcell size for mass grid
-dy             = 1000 # gridcell size for mass grid
-grid_ratio     = 4 # ratio between mass and routing gridcell size
-start_date     = '2010-07-29_00:00:00' # format 'yyyy-mm-dd_hh:mm:ss'
-end_date       = '2010-08-02_23:00:00' # format 'yyyy-mm-dd_hh:mm:ss'
+lat_center     = 36.6077 # latitude of the center of the domain
+lon_center     = -97.4882 # longitude of the center of the domain
+e_we           = 251 # number of gridcells in west_east direction (n+1)
+e_sn           = 251 # number of gridcells in north_south direction (n+1)
+dx             = 100 # gridcell size for mass grid
+dy             = 100 # gridcell size for mass grid
+grid_ratio     = 1 # ratio between mass and routing gridcell size
+start_date     = '2016-08-14_00:00:00' # format 'yyyy-mm-dd_hh:mm:ss'
+end_date       = '2016-08-17_00:00:00' # format 'yyyy-mm-dd_hh:mm:ss'
 
 # Projection information (always lambert conformal conic)
 truelat1       = 30.0 # first standard parallel
@@ -31,8 +31,8 @@ truelat2       = 60.0 # second standard parallel
 stand_lon      = -97.0 # standard_longitude
 
 # File locations
-restart_loc    = '' # location of LSM restart files if any
-restart_loch   = '' # location of hydro restart files if any
+restart_loc    = 'home/wrf_hydro_run/RESTART.2016090100_DOMAIN1' # location of LSM restart files if any
+restart_loch   = 'home/wrf_hydro_run/HYDRO_RST.2016-09-01_00:00_DOMAIN1' # location of hydro restart files if any
 dem_loc        = '/stor/tyche/hydro/private/nc153/nwc/GAEA/data/NEDtiled/NED.vrt' # location of dem.vrt or dem.tif
 forcing_loc    = '/stor/soteria/hydro/shared/data/PCF/1hr/daily/' # location of forcing files
 wps_geo_loc    = '../../software/WPS_GEOG/'# location of WRF Preprocessing Script geological data
@@ -40,10 +40,11 @@ wps_loc        = '../../software/WPS/'
 #dem_loc        = '/home/tsw35/soteria/software/WRF_hydro_standalone/tst_ny/dem/dem.tif'
 
 # Other Script Parameters 
-thresh         = 50 # channel determination threshold; see readme.txt
+thresh         = 250 # channel determination threshold; see readme.txt
 n_cores        = 8 # number to use in parallelized processes MINIMUM OF 2
 clean          = False # set to False to keep the working directory
 restart        = False # set to True to look for restart files
+coupled        = False # set to True if this is being run to couple with WRF
 setup_domain   = True # set to False to skip geogrid generation
 setup_wrfinput = True # set to False to skip creation of wrfinput
 setup_routing  = True # set to False to skip generation of fulldom_hires.nc
@@ -253,14 +254,15 @@ for i in range(num_days):
 	else:
 		day = '0'+str(date.day)
 	filelist.append(str(date.year)+str(month)+str(day)+'.nc')
-
+if coupled:
+	setup_forcing = False
 if setup_forcing:
 	
 	subprocess.run('cp '+scripts_dir+'wrf_regrid.py '+w_dir,shell=True)
 	os.chdir(w_dir)
 	src_proj = "'+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs'"
 	gdal_cmd = '\"gdalwarp -s_srs '+src_proj+' -t_srs \''+proj+'\' -te '+ex_string+' -tr '+\
-		   str(dx)+' '+str(dy)+' -r bilinear \"'
+		   str(dx)+' '+str(dy)+' -r average \"'
 
 	print(gdal_cmd)
 	runargs= forcing_loc+' '+w_dir+' '+forc_dir+' '+run_dir+' '+geogrid\
@@ -290,6 +292,11 @@ if setup_hydro:
 			hydro_write+= 'DXRT = '+str(dx)+'\n'
 		elif 'AGGFACTRT' in line: # AGGFACTRT grid ratio
 			hydro_write+= 'AGGFACTRT = '+str(grid_ratio)+'\n'
+		elif 'sys_cpl' in line: #define coupling to wrf
+			if coupled:
+				hydro_write+= 'sys_cpl = 2'
+			else:
+				hydro_write+=line
 		else:
 			hydro_write+= line
 	fp_hydro.close()

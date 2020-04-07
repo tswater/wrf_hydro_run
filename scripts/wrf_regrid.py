@@ -75,17 +75,13 @@ var_names={'T2D':'tair','Q2D':'spfh','U2D':'wind','V2D':'wind','PSFC':'psurf',
 # Delcare proj4 and Create transform (west, north, xsize, ysize)
 proj4_src = '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs'
 
-
-nd={'LWDOWN':357,'SWDOWN':241,'T2D':297,'V2D':2,'RAINRATE':0,'PSFC':97022,'Q2D':.0108,'U2D':2}
-
 print('Rank '+str(rank)+' regridding...',flush=True)
 for file in filelist[rank::size]:
 	for var in var_names.keys():
 		src_file =w_input+file
 		src_name = "NETCDF:\""+src_file+"\":"+var_names[var]
 		new_name = run_dir+w_dir+out_dir+file[0:8]+"_"+var+".nc"
-		regrid_cmd = gdal_cmd+'-srcnodata 30784'+' -dstnodata '+nd[var]+\
-                     ' '+src_name+' '+new_name+' >/dev/null'
+		regrid_cmd = gdal_cmd+' '+src_name+' '+new_name+' >/dev/null'
 		subprocess.run(regrid_cmd,shell=True)
 	data = nc.Dataset(new_name,'r')['Band20'][:]
 	for t in range(24):
