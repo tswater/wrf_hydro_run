@@ -262,7 +262,7 @@ if setup_forcing:
 	os.chdir(w_dir)
 	src_proj = "'+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs'"
 	gdal_cmd = '\"gdalwarp -s_srs '+src_proj+' -t_srs \''+proj+'\' -te '+ex_string+' -tr '+\
-		   str(dx)+' '+str(dy)+' -r average \"'
+		   str(dx)+' '+str(dy)+' -r bilinear \"'
 
 	print(gdal_cmd)
 	runargs= forcing_loc+' '+w_dir+' '+forc_dir+' '+run_dir+' '+geogrid\
