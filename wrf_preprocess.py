@@ -11,51 +11,54 @@ from datetime import timedelta
 # ----------------------------- PARAMETERS --------------------------------- #
 # this is the only section of the code that the user should have to edit for #
 # most basic runs. check the readme.txt file for more details on changes to  #
-# other sections of the script.                                              #
+# other sections of the script.											  #
 # -------------------------------------------------------------------------- #
 
 # Description of Domain
-lat_center     = 36.6077 # latitude of the center of the domain
-lon_center     = -97.4882 # longitude of the center of the domain
+lat_center	   = 36.6077 # latitude of the center of the domain
+lon_center	   = -97.4882 # longitude of the center of the domain
 e_we           = 251 # number of gridcells in west_east direction (n+1)
 e_sn           = 251 # number of gridcells in north_south direction (n+1)
 dx             = 100 # gridcell size for mass grid
 dy             = 100 # gridcell size for mass grid
 grid_ratio     = 1 # ratio between mass and routing gridcell size
-start_date     = '2016-08-14_00:00:00' # format 'yyyy-mm-dd_hh:mm:ss'
-end_date       = '2016-08-17_00:00:00' # format 'yyyy-mm-dd_hh:mm:ss'
+start_date	   = '2016-08-01_00:00:00' # format 'yyyy-mm-dd_hh:mm:ss'
+end_date	   = '2016-08-29_00:00:00' # format 'yyyy-mm-dd_hh:mm:ss'
 
 # Projection information (always lambert conformal conic)
-truelat1       = 30.0 # first standard parallel
-truelat2       = 60.0 # second standard parallel
+truelat1	   = 30.0 # first standard parallel
+truelat2	   = 60.0 # second standard parallel
 stand_lon      = -97.0 # standard_longitude
 
 # File locations
-restart_loc    = 'home/wrf_hydro_run/RESTART.2016090100_DOMAIN1' # location of LSM restart files if any
+restart_loc	   = 'home/wrf_hydro_run/RESTART.2016090100_DOMAIN1' # location of LSM restart files if any
 restart_loch   = 'home/wrf_hydro_run/HYDRO_RST.2016-09-01_00:00_DOMAIN1' # location of hydro restart files if any
-dem_loc        = '/stor/tyche/hydro/private/nc153/nwc/GAEA/data/NEDtiled/NED.vrt' # location of dem.vrt or dem.tif
+dem_loc	       = '/stor/tyche/hydro/private/nc153/nwc/GAEA/data/NEDtiled/NED.vrt' # location of dem.vrt or dem.tif
 forcing_loc    = '/stor/soteria/hydro/shared/data/PCF/1hr/daily/' # location of forcing files
-wps_geo_loc    = '../../software/WPS_GEOG/'# location of WRF Preprocessing Script geological data
-wps_loc        = '../../software/WPS/'
-#dem_loc        = '/home/tsw35/soteria/software/WRF_hydro_standalone/tst_ny/dem/dem.tif'
+wps_geo_loc	   = '../../software/WPS_GEOG/'# location of WRF Preprocessing Script geological data
+wps_loc	       = '../../software/WPS/' # location of WRF Preprocessing Script code 
+landcover_loc  = '/stor/soteria/hydro/private/nc153/data/NLCD/NLCD_2016_Land_Cover_Science_product_L48_20190424.img' #high resolution landcover (if hi_res_domain)
+soil_loc_top   = '/home/tsw35/soteria/data/wrf_soil/SGPsoiltop.tif' # location of hi resolution topsoil data
+soil_loc_bot   = '/home/tsw35/soteria/data/wrf_soil/SGPsoilbot.tif' # location of hi resolution bottom soil data
 
 # Other Script Parameters 
 thresh         = 250 # channel determination threshold; see readme.txt
 n_cores        = 8 # number to use in parallelized processes MINIMUM OF 2
-clean          = False # set to False to keep the working directory
-restart        = False # set to True to look for restart files
-coupled        = False # set to True if this is being run to couple with WRF
+clean          = True # set to False to keep the working directory
+restart	       = False # set to True to look for restart files
+coupled	       = False # set to True if this is being run to couple with WRF
+hi_res_domain  = True # set to True for high resolution land cover and elevation
 setup_domain   = True # set to False to skip geogrid generation
 setup_wrfinput = True # set to False to skip creation of wrfinput
 setup_routing  = True # set to False to skip generation of fulldom_hires.nc
 setup_forcing  = True # set to False to skip generation of forcing files
-setup_hydro    = True # set to False to skip autofill of hydro.namelist
+setup_hydro	   = True # set to False to skip autofill of hydro.namelist
 setup_hrldas   = True # set to False to skip autofill of namelist.hrldas
 
 
 # -------------------------------------------------------------------------- #
 # --------------------------- GENERAL SETUP -------------------------------- #
-# General setup of the script and declaration of some constants              #
+# General setup of the script and declaration of some constants			  #
 # -------------------------------------------------------------------------- #
 # Lets get started
 print('WRF Hydro Preprocessing Script by Tyler Waterman, Duke University')
@@ -83,7 +86,7 @@ sim_time = (end_dt-start_dt)/dt # simulation time in hours
 
 # Declare proj4 statement
 proj = "+proj=lcc +a=6370000 +b=6370000 +lon_0="+str(stand_lon)+" +lat_1="+\
-       str(truelat1)+" +lat_2="+str(truelat2)
+	   str(truelat1)+" +lat_2="+str(truelat2)
 
 print('Complete',flush=True)
 
@@ -94,8 +97,8 @@ y = e_sn - 1
 # -------------------------------------------------------------------------- #
 # ---------------------------- DOMAIN SETUP -------------------------------- #
 # Edit the namelist.wps file, and then run geogrid.exe in the WPS folder to  #
-# create a geo_emd01.nc file which is then placed in DOMAIN. From the        #
-# geogrid file, extract the extent of the mass grid                          #
+# create a geo_emd01.nc file which is then placed in DOMAIN. From the		#
+# geogrid file, extract the extent of the mass grid						  #
 # -------------------------------------------------------------------------- #
 
 print('Editing namelist.wps...',end='',flush=True)
@@ -109,9 +112,9 @@ for line in fp_wps:
 	elif 'end_date' in line:
 		wps_write += ' end_date   = \''+end_date+'\','+'\n'
 	elif 'e_we' in line:
-		wps_write += ' e_we              ='+str(e_we)+','+'\n'
+		wps_write += ' e_we			  ='+str(e_we)+','+'\n'
 	elif 'e_sn' in line:
-		wps_write += ' e_sn              ='+str(e_sn)+','+'\n'
+		wps_write += ' e_sn			  ='+str(e_sn)+','+'\n'
 	elif 'dx' in line:
 		wps_write += 'dx = '+str(dx)+','+'\n'
 	elif 'dy' in line:
@@ -180,12 +183,133 @@ extent[0]=np.round(np.mean(x_val))-dx*x/2 # get left extent for x
 extent[2]=np.round(np.mean(x_val))+dx*x/2 # get right extent for x
 extent[1]=np.round(np.mean(y_val))-dy*y/2 # get lower extent for y
 extent[3]=np.round(np.mean(y_val))+dy*y/2 # get upper extent for y
+ex_string = str(extent[0])+' '+str(extent[1])+' '+str(extent[2])+' '+str(extent[3])
 
+print('Complete',flush=True)
+
+# replace low resolution elevation and landcover with high resolution
+if hi_res_domain:
+	print('Adding High Resolution Data...',end='',flush=True)
+	# load in hi resolution elevation
+	dem_cmd="gdalwarp -t_srs '"+proj+"' -te "+ex_string+" -r bilinear -tr "+str(dx)+ \
+			  " "+str(dy)+" "+dem_loc+" dem_.tif >"+run_dir+log_dir+'dem1log.txt'
+	subprocess.run(dem_cmd,shell=True)
+	hi_res_data = np.flipud(rasterio.open('dem_.tif').read(1))
+	fp_geo = nc.Dataset(run_dir+dom_dir+'geo_em.d01.nc','r+')
+	fp_geo['HGT_M'][0,:,:] = hi_res_data[:]
+	
+	# NLCD: load in high resolution landcover
+	nlcd_cmd = "gdalwarp -t_srs '"+proj+"' -te "+ex_string+" -r mode -tr "+\
+			   str(dx)+" "+str(dy)+" "+landcover_loc+" nlcd_.tif"+\
+				" >"+run_dir+log_dir+'nlcdlog.txt'
+	mapping  = {0:-9999.0,11:21,12:15,21:13,22:13,23:13,24:13,31:16,41:4,\
+				 42:2,43:5,45:6,46:10,51:7,52:6,71:10,72:19,73:19,74:19,81:12,\
+				 82:12,90:11,95:11,-9999.0:-9999.0}
+	subprocess.run(nlcd_cmd,shell=True)
+	hi_res_data = np.flipud(rasterio.open('nlcd_.tif').read(1))
+	
+	# NLCD: remap landcover from NLCD to MODIS
+	lu_data = hi_res_data.copy()
+	for key in mapping.keys():
+		lu_data=np.where(hi_res_data==key,mapping[key],lu_data)
+
+	# NLCD: create the "layered" version
+	land_data=np.ones((21,lu_data.shape[0],lu_data.shape[1]))*-9999
+	for i in range(21):
+		land_data[i,:,:]=np.where(lu_data==i+1,1,0)
+	
+	# NLCD: replace data
+	fp_geo['LU_INDEX'][0,:,:]=lu_data[:]
+	fp_geo['LANDUSEF'][0,:,:,:]=land_data[:]
+
+	# SOIL: read in data
+	soilt_cmd = "gdalwarp -t_srs '"+proj+"' -te "+ex_string+" -r mode -tr "+\
+			   str(dx)+" "+str(dy)+" "+soil_loc_top+" soilt_.tif"+\
+				" >"+run_dir+log_dir+'soiltlog.txt'
+	soilb_cmd = "gdalwarp -t_srs '"+proj+"' -te "+ex_string+" -r mode -tr "+\
+			   str(dx)+" "+str(dy)+" "+soil_loc_bot+" soilb_.tif"+\
+				" >"+run_dir+log_dir+'soilblog.txt'
+
+	mapping = {0:1,1:2,2:3,3:6,4:4,5:5,6:7,7:9,8:8,9:10,10:11,11:12}
+	subprocess.run(soilt_cmd,shell=True)
+	hi_res_data_top = np.flipud(rasterio.open('soilt_.tif').read(1))
+	subprocess.run(soilb_cmd,shell=True)
+	hi_res_data_bot = np.flipud(rasterio.open('soilb_.tif').read(1))
+	
+	# SOIL: remap soils from old to new mapping
+	SCB_dom = hi_res_data_bot.copy()
+	SCT_dom = hi_res_data_top.copy()
+	for key in mapping.keys():
+		SCB_dom=np.where(hi_res_data_bot==key,mapping[key],SCB_dom)
+		SCT_dom=np.where(hi_res_data_top==key,mapping[key],SCT_dom)
+	
+	# SOIL: create the layered versions
+	bot_layered=np.ones((16,SCB_dom.shape[0],SCB_dom.shape[1]))
+	top_layered=np.ones((16,SCB_dom.shape[0],SCB_dom.shape[1]))
+	for i in range(16):
+		bot_layered[i,:,:]=np.where(SCB_dom==i+1,1,0)
+		top_layered[i,:,:]=np.where(SCT_dom==i+1,1,0)
+	
+	# SOIL: replace data
+	fp_geo['SCT_DOM'][0,:,:]=SCT_dom[:]
+	fp_geo['SCB_DOM'][0,:,:]=SCB_dom[:]
+	fp_geo['SOILCBOT'][0,:,:,:]=bot_layered[:]
+	fp_geo['SOILCTOP'][0,:,:,:]=top_layered[:]
+
+	# ----------------#
+	# LANDMASK ADJUST #
+	# ----------------#
+	land_mask = np.ones(SCT_dom.shape,dtype='bool')
+	land_mask[lu_data==21]=False
+	fp_geo['LANDMASK'][0,:,:]=land_mask.astype('int')
+	print(np.mean(land_mask))
+	# albedo
+	for i in range(12):
+		albedo = fp_geo['ALBEDO12M'][0,i,:,:]
+		albedo[~land_mask]=8
+		fp_geo['ALBEDO12M'][0,i,:,:]=albedo[:]
+	
+	# greenfrac
+	for i in range(12):	
+		greenfrac = fp_geo['GREENFRAC'][0,i,:,:]
+		greenfrac[~land_mask]=0
+		fp_geo['GREENFRAC'][0,i,:,:]=greenfrac[:]
+
+	# LAI
+	for i in range(12):
+		lai12 = fp_geo['LAI12M'][0,i,:,:]
+		lai12[~land_mask]=0
+		fp_geo['LAI12M'][0,i,:,:]=lai12[:]
+	
+	# SNOALB
+	snoalb = fp_geo['SNOALB'][0,:,:]
+	snoalb[~land_mask]=0
+	fp_geo['SNOALB'][0,:,:]=snoalb
+
+	# soil temp
+	soil_temp = fp_geo['SOILTEMP'][0,:,:]
+	soil_temp[~land_mask]=0
+	fp_geo['SOILTEMP'][0,:,:]=soil_temp[:]
+	
+	# VAR
+	var_uk = fp_geo['VAR'][0,:,:]
+	var_uk[~land_mask]=0
+	fp_geo['VAR'][0,:,:]=var_uk[:]
+	
+	# OA1-4
+	for OA in ['OA1','OA2','OA3','OA4']:
+		OA_uk = fp_geo[OA][0,:,:]
+		OA_uk[~land_mask]=0
+		fp_geo[OA][0,:,:]=OA_uk[:]
+	
+	# closeout
+	print(' Complete',flush=True)
+	fp_geo.close()
+	
 # Clean up text files
 subprocess.run('rm xy_out.txt',shell=True)
 subprocess.run('rm lat_lon.txt',shell=True)
 os.chdir(run_dir)
-print(' Complete',flush=True)
 print('FINISHED DOMAIN PREPROCESSING')
 
 
@@ -211,7 +335,7 @@ if setup_wrfinput:
 # -------------------------------------------------------------------------- #
 # ----------------------- GIS PROCESSING/ROUTING --------------------------- #
 # Extract the appropriate domain from a DEM, then using TauDEM create grids  #
-# with routing information and other hydrology information. Compile these    #
+# with routing information and other hydrology information. Compile these	#
 # grids into Fulldom_hires.nc
 # -------------------------------------------------------------------------- #
 ex_string = str(extent[0])+' '+str(extent[1])+' '+str(extent[2])+' '+str(extent[3])
@@ -220,14 +344,14 @@ if setup_routing:
 	print('Creating DEM...',end='',flush=True)
 	os.chdir(w_dir)
 	cmd = "gdalwarp -t_srs '"+proj+"' -te "+ex_string+" -tr "+str(dx/grid_ratio)+ \
-              " "+str(dy/grid_ratio)+" "+dem_loc+" dem.tif >" \
-              +run_dir+log_dir+'demlog.txt'
+			  " "+str(dy/grid_ratio)+" "+dem_loc+" dem.tif >" \
+			  +run_dir+log_dir+'demlog.txt'
 	subprocess.run(cmd,shell=True)
 	print('Complete',flush=True)
 	print('BEGIN GIS PROCESSING SCRIPT')
 	gis_cmd = 'python '+run_dir+scripts_dir+'wrf_gisprocess.py '+str(x)+' '+str(y)+' '+str(dx)+' '+ \
-	          str(dy)+' '+str(grid_ratio)+' \''+proj+'\' dem.tif '+str(thresh)+' '+\
-	          str(n_cores)+' '+dom_dir+' '+w_dir+' '+run_dir+' '+ex_string \
+			  str(dy)+' '+str(grid_ratio)+' \''+proj+'\' dem.tif '+str(thresh)+' '+\
+			  str(n_cores)+' '+dom_dir+' '+w_dir+' '+run_dir+' '+ex_string \
 		  +' '+str(truelat1)+' '+str(truelat2)+' '+str(stand_lon)
 	subprocess.run(gis_cmd,shell=True)
 	os.chdir(run_dir) 
@@ -266,9 +390,9 @@ if setup_forcing:
 
 	print(gdal_cmd)
 	runargs= forcing_loc+' '+w_dir+' '+forc_dir+' '+run_dir+' '+geogrid\
-                +' '+gdal_cmd+' "'+str(filelist)+'"'
+				+' '+gdal_cmd+' "'+str(filelist)+'"'
 	forcing_cmd = 'mpiexec --mca mpi_warn_on_fork 0 -n '+str(n_cores)+\
-                      ' python wrf_regrid.py '+runargs
+					  ' python wrf_regrid.py '+runargs
 	subprocess.run(forcing_cmd,shell=True)
 	os.chdir(run_dir)
 
@@ -285,7 +409,7 @@ if setup_hydro:
 		if 'RESTART_FILE' in line: # restart filename
 			if restart:
 				hydro_write+= 'RESTART_FILE  = \''+\
-				              restart_loch+'\''+'\n'
+							  restart_loch+'\''+'\n'
 			else:
 				hydro_write+=line
 		elif 'DXRT' in line: # DXRT grid spacing routing
@@ -321,7 +445,7 @@ if setup_hrldas:
 			hrldas_write+=' START_MIN   = '+start_date[14:16]+'\n'
 		elif ('RESTART_FILENAME_REQUESTED' in line) and (restart):
 			hrldas_write+=' RESTART_FILENAME_REQUESTED = \"'+\
-			              restart_loc+'\"'+'\n'
+						  restart_loc+'\"'+'\n'
 		elif 'KHOUR' in line: # runlength
 			hrldas_write+=' KHOUR = '+str(int(round(sim_time)))+'\n'
 		else:
