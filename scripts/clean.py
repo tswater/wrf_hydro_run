@@ -1,7 +1,8 @@
 # Completely clean out the run folder and return it to an 'empty' state
 import subprocess
+import os
 
-run_dir ='/home/tsw35/soteria/wrf_hydro/wrf_hydro_run'
+run_dir = os.getcwd()
 w_dir = run_dir+'/workspace/'
 namelist_dir = run_dir+'/namelists/'
 log_dir = run_dir+'/logs/'
