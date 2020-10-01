@@ -9,7 +9,7 @@ from datetime import datetime
 from datetime import timedelta
 # -------------------------------------------------------------------------- #
 # ----------------------------- PARAMETERS --------------------------------- #
-# this is the only section of the code that the user should have to edit for #
+# This is the only section of the code that the user should have to edit for #
 # most basic runs. check the readme.txt file for more details on changes to  #
 # other sections of the script.											  #
 # -------------------------------------------------------------------------- #
@@ -44,7 +44,7 @@ soil_loc_bot   = '/home/tsw35/soteria/data/wrf_soil/SGPsoilbot.tif' # location o
 # Other Script Parameters 
 thresh         = 250 # channel determination threshold; see readme.txt
 n_cores        = 8 # number to use in parallelized processes MINIMUM OF 2
-clean          = True # set to False to keep the working directory
+clean          = True # set to False to keep the working directory for debug
 restart	       = False # set to True to look for restart files
 coupled	       = False # set to True if this is being run to couple with WRF
 hi_res_domain  = True # set to True for high resolution land cover and elevation
@@ -103,7 +103,7 @@ y = e_sn - 1
 
 print('Editing namelist.wps...',end='',flush=True)
 
-# edit the namelist.wps
+# edit the namelist.wps to match the parameters above 
 wps_write =''
 fp_wps = open(namelist_dir+'template/namelist.wps','r')
 for line in fp_wps:
@@ -336,7 +336,7 @@ if setup_wrfinput:
 # ----------------------- GIS PROCESSING/ROUTING --------------------------- #
 # Extract the appropriate domain from a DEM, then using TauDEM create grids  #
 # with routing information and other hydrology information. Compile these	#
-# grids into Fulldom_hires.nc
+# grids into Fulldom_hires.nc. Runs scripts/wrf_gisprocess.py.
 # -------------------------------------------------------------------------- #
 ex_string = str(extent[0])+' '+str(extent[1])+' '+str(extent[2])+' '+str(extent[3])
 print(ex_string)
@@ -358,7 +358,8 @@ if setup_routing:
 
 # -------------------------------------------------------------------------- #
 # ------------------------ SETUP FORCING FILES ----------------------------- #
-# Regrid the incomming forcing data. This step will take a while
+# Regrid the incomming forcing data. This step will take a while and is      #
+# written to work with the princeton forcing data. Runs scripts/wrf_regrid.py#
 # -------------------------------------------------------------------------- #
 filelist = []
 dt = timedelta(1)

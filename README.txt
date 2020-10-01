@@ -11,9 +11,9 @@ REQUIRED:
 	r-plyr
 	rasterio
 	gdal
-- Compiled WRF and WRF hydro
+- Compiled WRF hydro
 - Compiled WPS
-- Compiled TauDEM (and gdal library added to LD_LIBRARY_PATH)
+- Compiled TauDEM (and the gdal library added to LD_LIBRARY_PATH)
 - A DEM
 - Forcing data
 
@@ -27,6 +27,8 @@ Run wrf_preprocess.py
 Check the output in the DOMAIN and FORCING folders. In DOMAIN you should have
 4 netcdf files, metadata, fulldom_hires, wrfinput and geo_emd01.nc
 
+Specifically check the FLOW DIRECTION variable in fulldom_hires
+
 In the Forcing folder, there should be many files. Run ncdump [filename]
 to verify the forcing data was written properly.
 
@@ -39,7 +41,7 @@ namelists online.
 
 Run mpiexec -n [num_processes] wrf_hydro.exe
 
-All output should be in the OUT folder created by running run_wrf.py
+Alternatively, run wrf_hydro_d.exe for the diagnostic wrf hydro
 
 To Postprocess the data (improve chunking for i/o, remove unecessary variables)
 run (int the main folder) scripts/wrf_postprocess.py

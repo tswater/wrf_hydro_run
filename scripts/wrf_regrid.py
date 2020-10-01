@@ -17,7 +17,8 @@ size = comm.Get_size()
 
 # -------------- #
 # LOAD ARGUMENTS #
-# -------------- # 
+# -------------- #
+# load in the arguments from wrf_preprocessing.py 
 argv = sys.argv[1:]
 w_input = argv[0]
 w_dir = argv[1]
