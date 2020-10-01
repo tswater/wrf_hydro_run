@@ -14,8 +14,11 @@ REQUIRED:
 - Compiled WRF hydro
 - Compiled WPS
 - Compiled TauDEM (and the gdal library added to LD_LIBRARY_PATH)
-- A DEM
+- A DEM from NED
 - Forcing data
+- Optional: Hiresolution data from NLCD and Polaris Soil types
+	+ note: the polaris soil type input will have to be 
+	  specially created to match expectations of the script
 
 First, move wrf_hydro.exe from the wrf hydro run folder to this location
 
@@ -48,4 +51,15 @@ run (int the main folder) scripts/wrf_postprocess.py
 
 To clean the output AND preprocessing from the folder, run scripts/clean.py
 Note that you may need to change the run directory listed in clean.py
+
+KNOWN ISSUES:
+	- wrf_regrid.py sometimes fails to properly regrid forcing files
+	  no known solution, other than manually editing the reprojected
+	  files to remove the abnormal gridcells. Problem will cause 
+	  wrf_hydro to crash part way through on or immediately after
+	  the date of the improperly regrided file.
+	- TauDEM has no reported "nodata" value for the flow direction
+	  output (and corresponding variable in Fulldom_hires.nc) but 
+	  wrf does have a nodata value. No known problems have occured,
+	  but may become an issue
 
