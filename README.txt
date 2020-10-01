@@ -19,6 +19,11 @@ REQUIRED:
 - Optional: Hiresolution data from NLCD and Polaris Soil types
 	+ note: the polaris soil type input will have to be 
 	  specially created to match expectations of the script
+	  
+NOTE: script only allows for lambert conformal conic projection, and a
+significant rewrite will likely be required to get it to work for other
+projections, although it does allow selection of standard latitude and
+longitude
 
 First, move wrf_hydro.exe from the wrf hydro run folder to this location
 
