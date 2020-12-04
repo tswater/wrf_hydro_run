@@ -38,8 +38,8 @@ forcing_loc    = '/stor/soteria/hydro/shared/data/PCF/1hr/daily/' # location of 
 wps_geo_loc	   = '../../software/WPS_GEOG/'# location of WRF Preprocessing Script geological data
 wps_loc	       = '../../software/WPS/' # location of WRF Preprocessing Script code 
 landcover_loc  = '/stor/soteria/hydro/private/nc153/data/NLCD/NLCD_2016_Land_Cover_Science_product_L48_20190424.img' #high resolution landcover (if hi_res_domain)
-soil_loc_top   = '/home/tsw35/soteria/data/wrf_soil/SGPsoiltop.tif' # location of hi resolution topsoil data
-soil_loc_bot   = '/home/tsw35/soteria/data/wrf_soil/SGPsoilbot.tif' # location of hi resolution bottom soil data
+soil_loc_top   = '/stor/soteria/hydro/shared/wrf_emma/polaris/top_soil.tif' # location of hi resolution topsoil data
+soil_loc_bot   = '/stor/soteria/hydro/shared/wrf_emma/polaris/bot_soil.tif' # location of hi resolution bottom soil data
 
 # Other Script Parameters 
 thresh         = 250 # channel determination threshold; see readme.txt
@@ -47,7 +47,7 @@ n_cores        = 8 # number to use in parallelized processes MINIMUM OF 2
 clean          = True # set to False to keep the working directory for debug
 restart	       = False # set to True to look for restart files
 coupled	       = False # set to True if this is being run to couple with WRF
-hi_res_domain  = False # set to True for high resolution land cover and elevation
+hi_res_domain  = True # set to True for high resolution land cover and elevation
 setup_domain   = True # set to False to skip geogrid generation
 setup_wrfinput = True # set to False to skip creation of wrfinput
 setup_routing  = True # set to False to skip generation of fulldom_hires.nc
@@ -229,7 +229,7 @@ if hi_res_domain:
 	soilb_cmd = "gdalwarp -t_srs '"+proj+"' -te "+ex_string+" -r mode -tr "+\
 			   str(dx)+" "+str(dy)+" "+soil_loc_bot+" soilb_.tif"+\
 				" >"+run_dir+log_dir+'soilblog.txt'
-
+	
 	mapping = {0:1,1:2,2:3,3:6,4:4,5:5,6:7,7:9,8:8,9:10,10:11,11:12}
 	subprocess.run(soilt_cmd,shell=True)
 	hi_res_data_top = np.flipud(rasterio.open('soilt_.tif').read(1))
