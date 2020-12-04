@@ -72,6 +72,8 @@ subprocess.run('mkdir '+run_dir+w_dir+out_dir,shell=True)
 # Some variable lists
 var_names={'T2D':'tair','Q2D':'spfh','U2D':'wind','V2D':'wind','PSFC':'psurf',
            'RAINRATE':'precip','SWDOWN':'swdown','LWDOWN':'lwdown'}
+var_maxs={'T2D':335,'Q2D':.05,'U2D':75,'V2D':75,'PSFC':110000,
+           'RAINRATE':10,'SWDOWN':2000,'LWDOWN':600}
 
 # Delcare proj4 and Create transform (west, north, xsize, ysize)
 proj4_src = '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs'
@@ -98,7 +100,14 @@ for file in filelist[rank::size]:
 			fp_out.createVariable(var,'f4',('Time','south_north','west_east'),\
                                               fill_value=fill_value)
 			var_file =  run_dir+w_dir+out_dir+file[0:8]+"_"+var+".nc"
-			fp_out[var][0,:,:]=nc.Dataset(var_file,'r')['Band'+str(t+1)][:]
+			data = nc.Dataset(var_file,'r')['Band'+str(t+1)][:]
+			msk=(data>=var_max[var])
+			smmsk=np.sum(msk)
+			data[msk]=np.median(data)
+			if(smmsk>0):
+				print(str(smmsk)+' BAD VALUES FILLED FOR '+str(var)\
+                    +' ON '+file[0:8]+format(t,'02d'))
+			fp_out[var][0,:,:]=data[:]
 			fp_out[var].missing_value=fill_value
 		# load in other data
 		fp_out.createVariable('Times','c',('DateStrLen'))

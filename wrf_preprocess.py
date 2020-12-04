@@ -23,7 +23,7 @@ dx             = 100 # gridcell size for mass grid
 dy             = 100 # gridcell size for mass grid
 grid_ratio     = 1 # ratio between mass and routing gridcell size
 start_date	   = '2016-08-01_00:00:00' # format 'yyyy-mm-dd_hh:mm:ss'
-end_date	   = '2016-08-29_00:00:00' # format 'yyyy-mm-dd_hh:mm:ss'
+end_date	   = '2016-08-02_00:00:00' # format 'yyyy-mm-dd_hh:mm:ss'
 
 # Projection information (always lambert conformal conic)
 truelat1	   = 30.0 # first standard parallel
@@ -47,7 +47,7 @@ n_cores        = 8 # number to use in parallelized processes MINIMUM OF 2
 clean          = True # set to False to keep the working directory for debug
 restart	       = False # set to True to look for restart files
 coupled	       = False # set to True if this is being run to couple with WRF
-hi_res_domain  = True # set to True for high resolution land cover and elevation
+hi_res_domain  = False # set to True for high resolution land cover and elevation
 setup_domain   = True # set to False to skip geogrid generation
 setup_wrfinput = True # set to False to skip creation of wrfinput
 setup_routing  = True # set to False to skip generation of fulldom_hires.nc
