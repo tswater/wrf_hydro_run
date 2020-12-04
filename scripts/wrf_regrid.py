@@ -72,7 +72,7 @@ subprocess.run('mkdir '+run_dir+w_dir+out_dir,shell=True)
 # Some variable lists
 var_names={'T2D':'tair','Q2D':'spfh','U2D':'wind','V2D':'wind','PSFC':'psurf',
            'RAINRATE':'precip','SWDOWN':'swdown','LWDOWN':'lwdown'}
-var_maxs={'T2D':335,'Q2D':.05,'U2D':75,'V2D':75,'PSFC':110000,
+var_max={'T2D':335,'Q2D':.05,'U2D':75,'V2D':75,'PSFC':110000,
            'RAINRATE':10,'SWDOWN':2000,'LWDOWN':600}
 
 # Delcare proj4 and Create transform (west, north, xsize, ysize)
