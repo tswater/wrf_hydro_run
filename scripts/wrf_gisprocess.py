@@ -175,7 +175,16 @@ fp_out['CHANNELGRID'][:]=cg[:]
 fp_out.createVariable('FLOWDIRECTION','short',dimensions=('y','x'))
 fp_out['FLOWDIRECTION'].grid_mapping='crs'
 fd = rasterio.open(f_file).read(1)
-fd[(fd>9)|(fd<0)]=255
+fd[fd<0]=255
+fd[fd>130]=255
+fd[fd==8]=128
+fd[fd==7]=64
+fd[fd==6]=32
+fd[fd==5]=16
+fd[fd==4]=8
+fd[fd==3]=4
+fd[fd==2]=2
+fd[fd==1]=1
 fp_out['FLOWDIRECTION'][:]=fd[:]
 
 # TOPOGRAPHY
