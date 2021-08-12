@@ -1,7 +1,7 @@
 RUN WRF HYDRO!
 
 REQUIRED: 
-- conda environment with the following packages installed:
+- conda environment with the following packages installed (this is innacurrate, ask me for updated conda environment):
 	ncl
 	r-ncdf4
 	netcdf4
