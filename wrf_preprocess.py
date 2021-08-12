@@ -392,7 +392,7 @@ if setup_forcing:
 	print(gdal_cmd)
 	runargs= forcing_loc+' '+w_dir+' '+forc_dir+' '+run_dir+' '+geogrid\
 				+' '+gdal_cmd+' "'+str(filelist)+'"'
-	forcing_cmd = 'mpiexec --mca mpi_warn_on_fork 0 -n '+str(n_cores)+\
+	forcing_cmd = 'mpiexec -n '+str(n_cores)+\
 					  ' python wrf_regrid.py '+runargs
 	subprocess.run(forcing_cmd,shell=True)
 	os.chdir(run_dir)
