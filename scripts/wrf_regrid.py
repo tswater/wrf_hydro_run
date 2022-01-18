@@ -20,13 +20,69 @@ size = comm.Get_size()
 # -------------- #
 # load in the arguments from wrf_preprocessing.py 
 argv = sys.argv[1:]
-w_input = argv[0]
-w_dir = argv[1]
-forcing_dir = argv[2]
-run_dir = argv[3]
-geogrid = run_dir+argv[4]
-gdal_cmd = argv[5]
-filelist =ast.literal_eval(argv[6])
+w_input = argv[0]. # location of the PCF files; I use '/stor/soteria/hydro/shared/data/PCF/1hr/daily/'
+w_dir = argv[1] # a workspace directory; blank directory you don't care about i.e. ../workspace/
+forcing_dir = argv[2] # Directory for the output forcing files; I use FORCING/
+run_dir = argv[3] # Run Directory for WRF (in my setup, this is often ../wrf_hydro_run/)
+geogrid = run_dir+argv[4] # Geogrid file i.e. /path/to/the/file/geo_em.d01.nc
+gdal_cmd = argv[5] # see comment below for details
+filelist =ast.literal_eval(argv[6]) # see below for details
+
+### OVERALL ###
+# the run should look like this:
+# mpiexec -n N python wrf_regrid.py w_input w_dir forcing_dir run_dir geogrid gdal_cmd filelist
+# pay close attention to use of '' and "" below, as having these wrong can mess up the run
+
+### GDAL_CMD ###
+# gdal_cmd looks like this: 
+# gdal_cmd = '\"gdalwarp -s_srs '+src_proj+' -t_srs \''+proj+'\' -te '+ex_string+' -tr '+str(dx)+' '+str(dy)+' -r bilinear \"'
+
+# src_proj doesn't need to change from my code and looks like this: src_proj = "'+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs'"
+
+# proj will be dependent on your specific projection used to run wrf; for me this is lcc and looks like this:
+# proj = "+proj=lcc +a=6370000 +b=6370000 +lon_0="+str(stand_lon)+" +lat_1="+str(truelat1)+" +lat_2="+str(truelat2)
+# you will need to determine stand_lon and truelate1 and truelat2 for your setup if using lcc; otherwise you
+# will need to figure out the proj4 statement for how you are running the code. The infromation for the proj4
+# statement should be in namelist.wps; I use the same naming conventions (truelat1,stand_lon etc.) as the namelist.wps file
+
+# ex_string is coded inefficiently in my script, but is... 
+# extent = [0,0,0,0]
+# extent[0]=np.round(np.mean(x_val))-dx*x/2 # get left extent for x
+# extent[2]=np.round(np.mean(x_val))+dx*x/2 # get right extent for x
+# extent[1]=np.round(np.mean(y_val))-dy*y/2 # get lower extent for y
+# extent[3]=np.round(np.mean(y_val))+dy*y/2 # get upper extent for y
+# ex_string = str(extent[0])+' '+str(extent[1])+' '+str(extent[2])+' '+str(extent[3])
+
+# dx and dy are probably in meters depends on the projection
+
+### FILELIST ###
+# this is a list of the files that you will generate forcing data for. 
+# each file in the list is formatted as yyyymmdd.nc (i.e. 20170612.nc)
+# Here is the code I use to generate filelist:
+
+'''
+filelist = []
+dt = timedelta(1)
+num_days=(end_dt-start_dt)/dt #start and end datetime for simulation
+num_days = round(num_days+1)
+n_files= num_days*24
+geogrid = dom_dir+'geo_em.d01.nc'
+
+for i in range(num_days):
+	date = start_dt+dt*i
+	if date.month > 9:
+		month = date.month
+	else:
+		month = '0'+str(date.month)
+	if date.day > 9:
+		day = date.day
+	else:
+		day = '0'+str(date.day)
+	filelist.append(str(date.year)+str(month)+str(day)+'.nc')
+'''
+# and this filelist gets passed to wrf_regrid.py as ... str(filelist) ...
+
+
 
 # --------------------- #
 # INITIAL SETUP STUFFS  #
