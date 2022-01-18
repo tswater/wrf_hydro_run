@@ -30,8 +30,9 @@ filelist =ast.literal_eval(argv[6]) # see below for details
 
 ### OVERALL ###
 # the run should look like this:
-# mpiexec -n N python wrf_regrid.py w_input w_dir forcing_dir run_dir geogrid gdal_cmd filelist
-# pay close attention to use of '' and "" below, as having these wrong can mess up the run
+# mpiexec -n N python wrf_regrid.py runargs
+# runargs is: runargs= w_input+' '+w_dir+' '+forcing_dir+' '+run_dir+' '+geogrid+' '+gdal_cmd+' "'+str(filelist)+'"'
+# pay close attention to use of '' and "" , as having these wrong can mess up the run
 
 ### GDAL_CMD ###
 # gdal_cmd looks like this: 
